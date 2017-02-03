@@ -1,0 +1,107 @@
+/*                                                                                                                                                                                            
+** main.c for sdl in main.c                                                                                                                                                                   
+**                                                                                                                                                                                            
+** Made by Erwan Bernard                                                                                                                                                                      
+** Login   <erwan.bernard@epitech.eu>                                                                                                                                                         
+**                                                                                                                                                                                            
+** Started on  Thu Feb 02 22:51:57 2017 Erwan Bernard                                                                                                                                         
+** Last update Fri Feb  3 17:43:13 2017 anatole zeyen                                                                                                                                         
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
+
+#define LONGUEUR 1280
+#define LARGEUR 720
+
+/*                                                                                                                                                                                            
+ * fct pause , attend close                                                                                                                                                                   
+ */
+
+void    my_putchar(char c){
+  write(1, &c, 1);}
+
+void pause()
+{
+  int continuer = 1;
+  SDL_Event event;
+
+  while (continuer)
+  {
+    SDL_WaitEvent(&event);
+    switch(event.type)
+    {
+      case SDL_QUIT:
+        continuer = 0;
+    }
+  }
+}
+
+int             color_window()
+{
+  SDL_Surface   *ecran;
+  SDL_Surface   *fond;
+  SDL_Surface   *textS;
+  SDL_Surface   *textC;
+  SDL_Surface   *textCursor;
+  SDL_Rect      position;
+  TTF_Font      *police;
+  SDL_Color couleurNoire = {170, 170, 170};
+  SDL_Event     event;
+
+  if ((ecran = SDL_SetVideoMode(LONGUEUR, LARGEUR, 32, SDL_HWSURFACE | SDL_RESIZABLE | SDL_DOUBLEBUF)) == NULL)
+    return (84);
+  SDL_WM_SetCaption("Navy", NULL);
+  fond = SDL_LoadBMP("images/unnamed.bmp");
+  position.x = 0;
+  position.y = 0;
+  SDL_BlitSurface(fond, NULL, ecran, &position);
+
+  police = TTF_OpenFont("oui.ttf", 70);
+  textS = TTF_RenderText_Blended(police, "my pid :", couleurNoire);
+  position.x = LONGUEUR / 2 - 190;
+  position.y = 100;
+  SDL_BlitSurface(textS, NULL, ecran, &position);
+
+  police = TTF_OpenFont("oui.ttf", 100);
+  textS = TTF_RenderText_Blended(police, "1.Serveur", couleurNoire);
+  position.x = LONGUEUR / 2 - 190;
+  position.y = 220;
+  SDL_BlitSurface(textS, NULL, ecran, &position);
+
+  textC = TTF_RenderText_Blended(police, "2.Client", couleurNoire);
+  position.x = LONGUEUR / 2 - 150;
+  position.y = 330;
+  SDL_BlitSurface(textC, NULL, ecran, &position);
+
+  SDL_Flip(ecran); // mise a jour ecran                                                                                                                                                       
+  while (1)
+    {
+      SDL_WaitEvent(&event);
+      if (event.type && event.type == SDL_KEYUP && event.key.keysym.sym == 38)
+        exit(0); // touche 1                                                                                                                                                                  
+      else if (event.type && event.type == SDL_KEYUP && event.key.keysym.sym == 233)
+        exit(0); // touche 2                                                                                                                                                                  
+      else if (event.type && event.type == SDL_KEYUP && event.key.keysym.sym == 27)
+        return (0); // echap                                                                                                                                                                  
+       // if (event.type == SDLK_A)                                                                                                                                                           
+      //return;                                                                                                                                                                               
+    }
+  pause();
+  SDL_FreeSurface(fond);
+}
+
+int     main(int argc, char **argv)
+{
+
+  if (SDL_Init(SDL_INIT_VIDEO) == -1)
+    return (84);
+  if(TTF_Init() == -1)
+    return (84);
+  color_window();
+  SDL_Quit();
+  TTF_Quit();
+  return (0);
+}
